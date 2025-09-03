@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BookingController;
-use Illuminate\Http\Client\Request as ClientRequest;
+use Illuminate\Http\Request;
 
 // Public routes
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
@@ -11,7 +11,7 @@ Route::post('/register', [\App\Http\Controllers\Auth\RegisteredUserController::c
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (ClientRequest $request) {
+    Route::get('/user', function (Request $request) {
         return $request->user();
     });
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
