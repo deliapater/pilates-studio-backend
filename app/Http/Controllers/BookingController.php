@@ -7,7 +7,10 @@ use Illuminate\Http\Request;
 class BookingController extends Controller
 {
     public function index(Request $request) {
-        return $request->user()->bookins->with('class')->get();
+        return $request->user()
+        ->bookings()
+        ->with('class')
+        ->get();
     }
 
     public function store(Request $request) {
@@ -25,6 +28,6 @@ class BookingController extends Controller
             'class_id' => $request->class_id
         ]);
 
-        return response()->json($booking, 201);
+        return response()->json($booking->load('class'), 201);
     }
 }

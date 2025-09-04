@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ClassesController;
 use Illuminate\Http\Request;
 
 // Public routes
@@ -15,6 +16,8 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
+    Route::get('/classes', [ClassesController::class, 'index']);
     Route::get('/bookings', [BookingController::class, 'index']);
     Route::post('/bookings', [BookingController::class, 'store']);
+    Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
 });
