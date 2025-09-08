@@ -10,7 +10,17 @@ class BookingController extends Controller
         return $request->user()
         ->bookings()
         ->with('class')
-        ->get();
+        ->get()
+        ->map(function ($booking) {
+            return [
+                'booking_id' => $booking->id,
+                'class_id' => $booking->class->id,
+                'className' => $booking->class->className,
+                'instructor' => $booking->class->instructor,
+                'time' => $booking->class->time,
+                'spots' => $booking->class->spots,
+            ];
+        });
     }
 
     public function store(Request $request) {
@@ -29,5 +39,17 @@ class BookingController extends Controller
         ]);
 
         return response()->json($booking->load('class'), 201);
+    }
+
+    public function destroy(Request $request, $id) {
+        $user = $request->user();
+
+        $booking = $user->bookings()->where('id', $id)->first();
+        if (!$booking) {
+            return response()->json(['message' => 'Booking not found'], 404);
+        }
+
+        $booking->delete();
+        return response()->json(['message' => 'Booking deleted'], 200);
     }
 }
