@@ -9,9 +9,10 @@ class ClassModel extends Model
 {
     use HasFactory;
     protected $table = 'classes';
-    protected $fillable = ['className','instructor','time','spots','day'];
-    
-    public function bookings() {
-        return $this->hasMany(Booking::class);
+    protected $fillable = ['className', 'instructor', 'time', 'spots', 'day'];
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'class_id');
     }
 }
