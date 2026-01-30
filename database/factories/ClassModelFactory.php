@@ -12,7 +12,7 @@ class ClassModelFactory extends Factory
     public function definition()
     {
         return [
-            'className'  => $this->faker->randomElement(['Yoga', 'Pilates', 'Zumba', 'Spin']),
+            'className'  => $this->faker->randomElement(['Pilates Beginner', 'Pilates Intermediate', 'Pilates Advance']),
             'instructor' => $this->faker->name(),
             'time'       => $this->faker->time('H:i'),
             'spots'      => $this->faker->numberBetween(5, 20),
