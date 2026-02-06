@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ClassModel;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -10,34 +11,6 @@ class ClassesTableSeeder extends Seeder
 {
     public function run()
     {
-        DB::table('classes')->insert([
-            [
-                'className' => 'Pilates Beginner',
-                'instructor' => 'Alice',
-                'time' => '09:00 AM',
-                'day' => 'Monday',
-                'spots' => 10,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'className' => 'Pilates Intermediate',
-                'instructor' => 'Bob',
-                'time' => '11:00 AM',
-                'day' => 'Tuesday',
-                'spots' => 8,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'className' => 'Pilates Advanced',
-                'instructor' => 'Clara',
-                'time' => '01:00 PM',
-                'day' => 'Wednesday',
-                'spots' => 6,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-        ]);
+        ClassModel::factory()->count(3)->create();
     }
 }
