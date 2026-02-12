@@ -8,6 +8,10 @@ use App\Models\ClassModel;
 class ClassesController extends Controller
 {
     public function index() {
-        return ClassModel::all();
+        $classes = ClassModel::orderBy('day')
+        ->orderBy('time')
+        ->get()
+        ->groupBy('day');
+        return response()->json($classes);
     }
 }
