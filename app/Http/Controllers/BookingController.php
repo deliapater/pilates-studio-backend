@@ -6,22 +6,24 @@ use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
+    private function formatBooking($booking)
+    {
+        return [
+            'booking_id' => $booking->id,
+            'class_id' => $booking->class->id,
+            'className' => $booking->class->className,
+            'instructor' => $booking->class->instructor,
+            'time' => $booking->class->time,
+            'spots' => $booking->class->spots,
+        ];
+    }
     public function index(Request $request)
     {
         return $request->user()
             ->bookings()
             ->with('class')
             ->get()
-            ->map(function ($booking) {
-                return [
-                    'booking_id' => $booking->id,
-                    'class_id' => $booking->class->id,
-                    'className' => $booking->class->className,
-                    'instructor' => $booking->class->instructor,
-                    'time' => $booking->class->time,
-                    'spots' => $booking->class->spots,
-                ];
-            });
+            ->map(fn($booking) => $this->formatBooking($booking));
     }
 
     public function store(Request $request)
@@ -47,7 +49,12 @@ class BookingController extends Controller
 
         $class->decrement('spots');
 
-        return response()->json($booking->load('class'), 201);
+        $booking->load('class');
+
+        return response()->json(
+            $this->formatBooking($booking),
+            201
+        );
     }
 
     public function destroy(Request $request, $id)
