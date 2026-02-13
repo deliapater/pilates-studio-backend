@@ -6,50 +6,61 @@ use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         return $request->user()
-        ->bookings()
-        ->with('class')
-        ->get()
-        ->map(function ($booking) {
-            return [
-                'booking_id' => $booking->id,
-                'class_id' => $booking->class->id,
-                'className' => $booking->class->className,
-                'instructor' => $booking->class->instructor,
-                'time' => $booking->class->time,
-                'spots' => $booking->class->spots,
-            ];
-        });
+            ->bookings()
+            ->with('class')
+            ->get()
+            ->map(function ($booking) {
+                return [
+                    'booking_id' => $booking->id,
+                    'class_id' => $booking->class->id,
+                    'className' => $booking->class->className,
+                    'instructor' => $booking->class->instructor,
+                    'time' => $booking->class->time,
+                    'spots' => $booking->class->spots,
+                ];
+            });
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $request->validate([
             'class_id' => 'required|exists:classes,id'
         ]);
 
         $user = $request->user();
+        $class = \App\Models\ClassModel::findOrFail($request->class_id);
 
-        if($user->bookings()->where('class_id', $request->class_id)->exists()) {
+        if ($user->bookings()->where('class_id', $request->class_id)->exists()) {
             return response()->json(['message' => 'Already booked'], 409);
+        }
+
+        if ($class->spots <= 0) {
+            return response()->json(['message' => 'No spots available'], 400);
         }
 
         $booking = $user->bookings()->create([
             'class_id' => $request->class_id
         ]);
 
+        $class->decrement('spots');
+
         return response()->json($booking->load('class'), 201);
     }
 
-    public function destroy(Request $request, $id) {
+    public function destroy(Request $request, $id)
+    {
         $user = $request->user();
 
         $booking = $user->bookings()->where('id', $id)->first();
         if (!$booking) {
             return response()->json(['message' => 'Booking not found'], 404);
         }
-
+        $booking->class->increment('spots');
         $booking->delete();
+
         return response()->json(['message' => 'Booking deleted'], 200);
     }
 }
